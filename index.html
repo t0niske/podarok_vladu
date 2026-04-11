@@ -7,60 +7,41 @@
 <style>
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: linear-gradient(135deg, #1a1a1a, #2c2c54);
     color: white;
     text-align: center;
 }
-
 .container {
     max-width: 700px;
     margin: auto;
     padding: 30px;
 }
-
 .birthday {
     font-size: 70px;
     color: gold;
     font-weight: bold;
 }
-
 img {
     width: 220px;
     border-radius: 20px;
     margin: 20px 0;
 }
-
 input {
     padding: 12px;
     width: 80%;
     border-radius: 10px;
     border: none;
 }
-
 button {
     padding: 12px 25px;
     margin-top: 10px;
-    border: none;
     border-radius: 10px;
     background: gold;
-    font-weight: bold;
     cursor: pointer;
 }
-
-button:hover {
-    background: orange;
-}
-
-.hidden {
-    display: none;
-}
-
-.progress {
-    margin: 15px 0;
-    font-size: 18px;
-    opacity: 0.7;
-}
+.hidden { display: none; }
+.progress { opacity: 0.7; margin: 10px; }
 </style>
 </head>
 
@@ -68,101 +49,95 @@ button:hover {
 
 <div class="container">
 
-    <div id="start">
-        <div class="birthday">25 🎉</div>
-        <h1>С Днём Рождения!</h1>
-        <img src="photo.png">
-        <p>Пройди 25 заданий и получи подарок 🎁</p>
-        <button onclick="startQuiz()">Начать</button>
-    </div>
+<div id="start">
+    <div class="birthday">25 🎉</div>
+    <h1>С Днём Рождения!</h1>
+    <img src="photo.png">
+    <p>Пройди 25 заданий 🎁</p>
+    <button onclick="startQuiz()">Начать</button>
+</div>
 
-    <div id="quiz" class="hidden"></div>
+<div id="quiz" class="hidden"></div>
 
-    <div id="result" class="hidden">
-        <h1>🔥 Ты прошёл квест!</h1>
-        <p style="font-size:22px;">
-            Напиши кодовое слово <b>"Реал Чемпион"</b><br>
-            Антону в Telegram и забери подарок 🎁
-        </p>
-    </div>
+<div id="result" class="hidden">
+    <h1>🔥 Ты прошёл квест!</h1>
+    <p>Напиши <b>"Реал Чемпион"</b> Антону в Telegram 🎁</p>
+</div>
 
 </div>
 
 <script>
 
-const SALT = "realchampion25";
+// "соль"
+const SALT = "25win";
 
-// SHA-256
-async function hash(text) {
-    const msgUint8 = new TextEncoder().encode(text);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+// кодировка
+function encode(str){
+    return btoa(unescape(encodeURIComponent(str + SALT)));
 }
 
-// ВОПРОСЫ + ПРАВИЛЬНЫЕ ХЭШИ
+// ВОПРОСЫ + ЗАКОДИРОВАННЫЕ ОТВЕТЫ
 const q = [
-["Без окон, без дверей — полна горница людей","8f0b9b7b5dbe2c4c5b6b90b0d5b9e6f63a6b3f0e4d5c6a7b8c9d0e1f2a3b4c5d"],
-["Что всегда растет, но не уменьшается?","6c8f1a5b4d3e2f1a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6"],
-["Что можно увидеть с закрытыми глазами?","b7a6c5d4e3f2a1b0c9d8e7f6123456789abcdefabcdefabcdefabcdefabcd"],
-["Сколько месяцев имеют 28 дней?","5f4dcc3b5aa765d61d8327deb882cf99abcdefabcdefabcdefabcdefabcd"],
-["Что тяжелее: килограмм железа или пуха?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Продолжи: 2,4,8,16","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Если есть 3 яблока и забрал 2","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["1000+100+10+1","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Что идет, но не приходит?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["5 сыновей и сестра","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Что можно сломать без касания?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Что принадлежит тебе?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["5 машин -> 100 машин","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Что исчезает при произнесении?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Сколько углов у круга?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Что увеличивается если перевернуть?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["1,3,6,10","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Что всегда перед тобой?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Что можно держать но не трогать?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Петух и яйцо","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["2+2*2","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Вверх и вниз но на месте","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Что можно поймать но не бросить?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["3 кота и 5 котов","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"],
-["Сколько секунд в году?","abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd"]
+["Без окон, без дверей — полна горница людей", encode("огурец")],
+["Что всегда растет, но не уменьшается?", encode("возраст")],
+["Что можно увидеть с закрытыми глазами?", encode("сон")],
+["Сколько месяцев имеют 28 дней?", encode("12")],
+["Что тяжелее: кг железа или пуха?", encode("одинаково")],
+["2,4,8,16", encode("32")],
+["3 яблока взял 2", encode("2")],
+["1000+100+10+1", encode("1111")],
+["Что идет но не приходит?", encode("время")],
+["5 сыновей + сестра", encode("6")],
+["Сломать без касания", encode("обещание")],
+["Принадлежит тебе", encode("имя")],
+["5 машин → 100 машин", encode("2000")],
+["Исчезает при слове", encode("тишина")],
+["Углы круга", encode("0")],
+["Перевернуть увеличится", encode("6")],
+["1,3,6,10", encode("15")],
+["Всегда перед тобой", encode("будущее")],
+["Можно держать не трогая", encode("слово")],
+["Петух яйцо", encode("петухи не несут яйца")],
+["2+2*2", encode("6")],
+["Вверх вниз на месте", encode("лестница")],
+["Поймать но не бросить", encode("простуда")],
+["3 и 5 котов", encode("8")],
+["Секунд в году", encode("12")]
 ];
 
 let current = 0;
 
-function startQuiz() {
+function startQuiz(){
     document.getElementById("start").classList.add("hidden");
     document.getElementById("quiz").classList.remove("hidden");
-    loadQuestion();
+    load();
 }
 
-function loadQuestion() {
-    if (current >= q.length) {
+function load(){
+    if(current >= q.length){
         document.getElementById("quiz").classList.add("hidden");
         document.getElementById("result").classList.remove("hidden");
         return;
     }
 
     document.getElementById("quiz").innerHTML = `
-        <div class="progress">Вопрос ${current+1} из 25</div>
+        <div class="progress">Вопрос ${current+1}/25</div>
         <h2>${q[current][0]}</h2>
-        <input id="answer" placeholder="Ответ">
+        <input id="a">
         <br>
         <button onclick="check()">Ответить</button>
-        <p id="error" style="color:red;"></p>
+        <p id="err" style="color:red"></p>
     `;
 }
 
-async function check() {
-    let user = document.getElementById("answer").value.trim().toLowerCase();
-    let userHash = await hash(user + SALT);
+function check(){
+    let user = document.getElementById("a").value.trim().toLowerCase();
 
-    if (userHash === q[current][1]) {
+    if(encode(user) === q[current][1]){
         current++;
-        loadQuestion();
+        load();
     } else {
-        document.getElementById("error").innerText = "❌ Неправильно";
+        document.getElementById("err").innerText = "❌ Неправильно";
     }
 }
 
