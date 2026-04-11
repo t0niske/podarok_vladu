@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Квест-загадки</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: #fff;
+        text-align: center;
+        padding: 40px;
+    }
+    .container {
+        max-width: 600px;
+        margin: auto;
+    }
+    input {
+        padding: 10px;
+        width: 80%;
+        margin-top: 10px;
+    }
+    button {
+        padding: 10px 20px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧠 Пройди 5 загадок</h1>
+
+    <div id="quiz"></div>
+
+    <div id="result" class="hidden">
+        <h2>🎉 Ты справился!</h2>
+        <p style="font-size: 20px;">
+            Напиши кодовое слово <b>"Реал Чемпион"</b> Антону в телеграм  
+            и забери свой подарок 🎁
+        </p>
+    </div>
+</div>
+
+<script>
+const riddles = [
+    {
+        question: "Без окон, без дверей — полна горница людей",
+        answer: "огурец"
+    },
+    {
+        question: "Зимой и летом одним цветом",
+        answer: "елка"
+    },
+    {
+        question: "Что можно увидеть с закрытыми глазами?",
+        answer: "сон"
+    },
+    {
+        question: "Сидит дед, во сто шуб одет",
+        answer: "лук"
+    },
+    {
+        question: "Что становится больше, если его перевернуть?",
+        answer: "6"
+    }
+];
+
+let current = 0;
+
+function loadQuestion() {
+    if (current >= riddles.length) {
+        document.getElementById("quiz").classList.add("hidden");
+        document.getElementById("result").classList.remove("hidden");
+        return;
+    }
+
+    const q = riddles[current];
+
+    document.getElementById("quiz").innerHTML = `
+        <h2>Загадка ${current + 1}</h2>
+        <p>${q.question}</p>
+        <input type="text" id="answer" placeholder="Твой ответ">
+        <br>
+        <button onclick="checkAnswer()">Ответить</button>
+        <p id="error" style="color:red;"></p>
+    `;
+}
+
+function checkAnswer() {
+    const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+    const correct = riddles[current].answer;
+
+    if (userAnswer === correct) {
+        current++;
+        loadQuestion();
+    } else {
+        document.getElementById("error").innerText = "❌ Неправильно, попробуй ещё";
+    }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
